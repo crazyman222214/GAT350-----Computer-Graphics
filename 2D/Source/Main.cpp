@@ -20,18 +20,16 @@ int main(int argc, char* argv[])
 
 
         buffer.Clear({0,0,0,255});
-        /*for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 100; i++)
         {
             int x = rand() % 800;
             int y = rand() % 600;
             buffer.DrawPoint(x, y, { 255,255,255,255 });
 
-        }*/
+        }
 
         buffer.DrawRect(100, 100, 100, 50, {255, 255, 255,255});
-
         buffer.Update();
-
         renderer->CopyFramebuffer(buffer);
         //renderer = buffer;
 
