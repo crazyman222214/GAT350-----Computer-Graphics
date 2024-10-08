@@ -1,5 +1,6 @@
 #include "Framebuffer.h"
 #include "Renderer.h"
+#include "Image.h"
 #include <iostream>
 
 Framebuffer::Framebuffer(const Renderer& renderer, int width, int height)
@@ -105,13 +106,7 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 {
 
-	std::cout << "initial 1st point is at (" << x1 << ", " << y1 << ")\n";
-	std::cout << "initial 2nd point is at (" << x2 << ", " << y2 << ")\n";
-
 	CohenSutherlandClipDetection(x1, y1, x2, y2);
-	//Verifying the Clip Detection works :0
-	std::cout << "new 1st point is at (" << x1 << ", " << y1 << ")\n";
-	std::cout << "new 2nd point is at (" << x2 << ", " << y2 << ")\n";
 
 	int dy = y2 - y1;
 	int dx = x2 - x1;
@@ -256,7 +251,7 @@ void Framebuffer::CohenSutherlandClipDetection(int& x1, int& y1, int& x2, int& y
 			//Finds the outside endpoint
 			codeOut = (code1) ? code1 : code2;
 
-			//Since our y=0 is at the top, y=0
+			//Does some funny math to find the intersection with the borders
 			if (codeOut & top)
 			{
 				x = x1 + (x2 - x1) * (0 - y1) / (y2 - y1);
@@ -278,6 +273,7 @@ void Framebuffer::CohenSutherlandClipDetection(int& x1, int& y1, int& x2, int& y
 				x = m_width;
 			}
 
+			//Finds out which code it is correcting and generates a new clipping code and runs the algo again
 			if (codeOut == code1)
 			{
 				x1 = x;
@@ -290,6 +286,90 @@ void Framebuffer::CohenSutherlandClipDetection(int& x1, int& y1, int& x2, int& y
 				y2 = y;
 				code2 = ClippingRegionCode(x2, y2);
 			}
+		}
+	}
+}
+
+void Framebuffer::DrawLinearCurve(int x1, int y1, int x2, int y2, const color_t& color)
+{
+	float dt = 1.0f/10;
+	float t = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		int sx1 = Lerp(x1, x2, t);
+		int sy1 = Lerp(y1, y2, t);
+		
+		int sx2 = Lerp(x1, x2, t+dt);
+		int sy2 = Lerp(y1, y2, t+dt);
+		t += dt;
+
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+	
+}
+
+void Framebuffer::DrawQuadraticCurve(int x1, int y1, int x2, int y2, int x3, int y3, const color_t& color)
+{
+	float dt = 1.0f / 10;
+	float t = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		int sx1, sy1;
+		QuadraticPoint(x1, y1, x2, y2, x3, y3, t, sx1, sy1);
+		int sx2, sy2;
+		QuadraticPoint(x1, y1, x2, y2, x3, y3, t+dt, sx2, sy2);
+		
+		t += dt;
+
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+}
+
+void Framebuffer::DrawCubicCurve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, const color_t& color)
+{
+	float dt = 1.0f / 500;
+	float t = 0;
+	
+	for (int i = 0; i < 500; i++)
+	{
+		int sx1, sy1;
+		CubicPoint(x1, y1, x2, y2, x3, y3, x4, y4, t, sx1, sy1);
+		int sx2, sy2;
+		CubicPoint(x1, y1, x2, y2, x3, y3, x4, y4, t + dt, sx2, sy2);
+
+		t += dt;
+
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+}
+
+void Framebuffer::DrawImage(int x, int y, const Image& image)
+{
+	// check if off-screen
+	if (x + image.m_width < 0 || x > m_width || y + image.m_height < 0 || y > m_height) return;
+
+	// iterate through image y
+	for (int iy = 0; iy < image.m_height; iy++)
+	{
+		// set screen y 
+		int sy = y + iy;
+		// check if off-screen, don't draw if off-screen
+		if (y > m_height || y < 0) continue;
+
+		// iterate through image x
+		for (int ix = 0; ix < image.m_width; ix++)
+		{
+			// set screen x
+			int sx = x + ix;
+			// check if off-screen, don't draw if off-screen
+			if (x > m_width || x < 0) continue;
+
+			// get image pixel color
+			color_t color = image.m_buffer[ix + (iy * image.m_width)];
+			// check alpha, if 0 don't draw
+			if (color.a == 0) continue;
+			// set buffer to color
+			m_buffer[sx + (sy * m_width)] = color;
 		}
 	}
 }
