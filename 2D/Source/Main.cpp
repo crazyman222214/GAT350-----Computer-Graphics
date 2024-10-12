@@ -52,18 +52,19 @@ int main(int argc, char* argv[])
         buffer.DrawCubicCurve(200, 300, mx, my, 400, 500, 450, 300, {255, 0, 0, 255});
 
 
-        PostProcess::Invert(buffer.m_buffer);
-        PostProcess::Monochrome(buffer.m_buffer);
-        PostProcess::Brightness(buffer.m_buffer, 40);
-        PostProcess::ColorBalance(buffer.m_buffer, 70, 50, 50);
-        PostProcess::Noise(buffer.m_buffer, 30);
-        PostProcess::Threshold(buffer.m_buffer, 200);
-        PostProcess::Posterize(buffer.m_buffer, 10);
+        //PostProcess::Invert(buffer.m_buffer);
+        //PostProcess::Monochrome(buffer.m_buffer);
+        //PostProcess::Brightness(buffer.m_buffer, 40);
+        //PostProcess::ColorBalance(buffer.m_buffer, 70, 50, 50);
+        //PostProcess::Noise(buffer.m_buffer, 30);
+        //PostProcess::Threshold(buffer.m_buffer, 200);
+        //PostProcess::Posterize(buffer.m_buffer, 10);
 
         //PostProcess::BoxBlur(buffer.m_buffer, buffer.m_width, buffer.m_height);
         //PostProcess::GaussianBlur(buffer.m_buffer, buffer.m_width, buffer.m_height);
         //PostProcess::Sharpen(buffer.m_buffer, buffer.m_width, buffer.m_height);
         //PostProcess::Edge(buffer.m_buffer, buffer.m_width, buffer.m_height, 10);
+        PostProcess::Emboss(buffer.m_buffer, buffer.m_width, buffer.m_height);
 
         buffer.Update();
         renderer->CopyFramebuffer(buffer);
