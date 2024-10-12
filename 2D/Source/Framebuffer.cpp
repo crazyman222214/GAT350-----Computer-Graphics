@@ -354,7 +354,7 @@ void Framebuffer::DrawImage(int x, int y, const Image& image)
 		// set screen y 
 		int sy = y + iy;
 		// check if off-screen, don't draw if off-screen
-		if (y > m_height || y < 0) continue;
+		if (sy >= m_height || sy < 0) continue;
 
 		// iterate through image x
 		for (int ix = 0; ix < image.m_width; ix++)
@@ -362,7 +362,7 @@ void Framebuffer::DrawImage(int x, int y, const Image& image)
 			// set screen x
 			int sx = x + ix;
 			// check if off-screen, don't draw if off-screen
-			if (x > m_width || x < 0) continue;
+			if (sx >= m_width || sx < 0) continue;
 
 			// get image pixel color
 			color_t color = image.m_buffer[ix + (iy * image.m_width)];

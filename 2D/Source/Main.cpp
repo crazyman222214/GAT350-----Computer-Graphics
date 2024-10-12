@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "Framebuffer.h"
 #include "Image.h"
+#include "PostProcess.h"
 #include <SDL.h>
 #include <iostream>
 
@@ -14,17 +15,20 @@ int main(int argc, char* argv[])
     Framebuffer buffer(*renderer, renderer->GetWidth(), renderer->GetHeight());
 
     Image image;
-    image.Load("images.png");
+    image.Load("scene.jpg");
 
     // create renderer
     while (!renderer->IsQuit())
     {
         renderer->CheckForEvents();
         buffer.Clear({255,255,255,255});
+
+        buffer.DrawImage(-10, -20, image);
+
         for (int i = 0; i < 10; i++)
         {
-            int x1 = rand() % 600;
-            int y1 = rand() % 400;
+            int x1 = rand() % 800;
+            int y1 = rand() % 600;
 
             int x3 = 100;
             int y3 = 400;
@@ -38,7 +42,7 @@ int main(int argc, char* argv[])
 
             buffer.DrawLine(-10, -50, 900, 700, {255, 255, 255, 255});*/
 
-            buffer.DrawImage(x1, y1, image);
+            //buffer.DrawImage(x1, y1, image);
             
         }
         //buffer.DrawLinearCurve(200, 100, 100, 200, {255, 0, 0, 255});
@@ -47,7 +51,20 @@ int main(int argc, char* argv[])
         //buffer.DrawQuadraticCurve(200, 300, mx, my, 400, 300, {255, 0, 0, 255});
         buffer.DrawCubicCurve(200, 300, mx, my, 400, 500, 450, 300, {255, 0, 0, 255});
 
-        //buffer.DrawRect(100, 100, 100, 50, {255, 255, 255,255});
+
+        PostProcess::Invert(buffer.m_buffer);
+        PostProcess::Monochrome(buffer.m_buffer);
+        PostProcess::Brightness(buffer.m_buffer, 40);
+        PostProcess::ColorBalance(buffer.m_buffer, 70, 50, 50);
+        PostProcess::Noise(buffer.m_buffer, 30);
+        PostProcess::Threshold(buffer.m_buffer, 200);
+        PostProcess::Posterize(buffer.m_buffer, 10);
+
+        //PostProcess::BoxBlur(buffer.m_buffer, buffer.m_width, buffer.m_height);
+        //PostProcess::GaussianBlur(buffer.m_buffer, buffer.m_width, buffer.m_height);
+        //PostProcess::Sharpen(buffer.m_buffer, buffer.m_width, buffer.m_height);
+        //PostProcess::Edge(buffer.m_buffer, buffer.m_width, buffer.m_height, 10);
+
         buffer.Update();
         renderer->CopyFramebuffer(buffer);
         //renderer = buffer;
