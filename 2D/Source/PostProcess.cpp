@@ -83,6 +83,14 @@ void PostProcess::Posterize(std::vector<color_t>& buffer, uint8_t levels)
 		});
 }
 
+void PostProcess::Alpha(std::vector<color_t>& buffer, uint8_t alpha)
+{
+	std::for_each(buffer.begin(), buffer.end(), [alpha](auto& c)
+		{
+			c.a = alpha;
+		});
+}
+
 void PostProcess::BoxBlur(std::vector<color_t>& buffer, int width, int height)
 {
 	std::vector<color_t> source = buffer;
@@ -296,6 +304,11 @@ void PostProcess::Emboss(std::vector<color_t>& buffer, int width, int height)
 				b += pixel.b * weight;
 			}
 		}
+
+	
+		r += 128;
+		g += 128;
+		b += 128;
 
 		color_t& color = buffer[i];
 		color.r = static_cast<uint8_t>(Clamp(r, 0, 255));
