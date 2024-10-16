@@ -8,64 +8,62 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <SDL.h>
 #include <iostream>
+#include "Model.h"
 
 int main(int argc, char* argv[])
 {
+    Image image;
+    image.Load("scene.jpg");
     Renderer* renderer = new Renderer();
+
+    Image imageAlt;
+    imageAlt.Load("colors.png");
+
 
     renderer->Initialize();
     renderer->CreateWindow("Comp Graphics", 600, 800);
 
     Framebuffer buffer(*renderer, renderer->GetWidth(), renderer->GetHeight());
 
-    Image image;
-    image.Load("scene.jpg");
+    Verticies_t verticies
+    { 
+        {-5, 5, 0}, 
+        {5, 5, 0},
+        {-5, -5, 0},
+        {-10, -5, 0},
+        {0, -5, 0},
+        {-5, 5, 0} 
+    };
+    Model model{ verticies, {0, 255, 0, 255} };
 
-    Image imageAlt;
-    imageAlt.Load("colors.png");
-    PostProcess::Alpha(imageAlt.m_buffer, 128);
-
+    SetBlendMode(BlendMode::Normal);
     //OpenGL Math
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
-
+    
 
     // create renderer
     while (!renderer->IsQuit())
     {
         renderer->CheckForEvents();
-        buffer.Clear({255,255,255,255});
 
-        buffer.DrawImage(-10, -20, image);
+        //Sets bg color
+        buffer.Clear({128,128,128,255});
+        //Allows Alpha
+        //PostProcess::Alpha(imageAlt.m_buffer, 128);
 
-        for (int i = 0; i < 10; i++)
-        {
-            int x1 = rand() % 800;
-            int y1 = rand() % 600;
+        ////Draws background Image
+        //SetBlendMode(BlendMode::Normal);
+        //buffer.DrawImage(-10, -20, image);
 
-            int x3 = 100;
-            int y3 = 400;
-            
-            //buffer.DrawTriangle(x1, y1, x2, y2, x3, y3, color_t{(Uint8)(rand() % 255), (Uint8)(rand() % 255), (Uint8)(rand() % 255), 255});
-            /*buffer.DrawCircle(200, 400, 10, {255, 0, 0, 255});
-            buffer.DrawCircle(200, 400, 50, {255, 255, 0, 255});
-            buffer.DrawCircle(400, 400, 100, {0, 0, 255, 255});
+        //int mx, my;
+        //SDL_GetMouseState(&mx, &my);
 
-            buffer.DrawTriangle(100, 400, 300, 400, 200, 300, { 255, 255,255,255 });
-
-            buffer.DrawLine(-10, -50, 900, 700, {255, 255, 255, 255});*/
+        int ticks = SDL_GetTicks(); 
+        float time = ticks * 0.001f;
 
 
-            
-        }
-        //buffer.DrawLinearCurve(200, 100, 100, 200, {255, 0, 0, 255});
-        int mx, my;
-        SDL_GetMouseState(&mx, &my);
-        ////buffer.DrawQuadraticCurve(200, 300, mx, my, 400, 300, {255, 0, 0, 255});
-        //buffer.DrawCubicCurve(200, 300, mx, my, 400, 500, 450, 300, {255, 0, 0, 255});
 
-        SetBlendMode(BlendMode::Additive);
-        buffer.DrawImage(mx, my, imageAlt);
+        //SetBlendMode(BlendMode::Multiply);
+        //buffer.DrawImage(mx, my, imageAlt);
 
         #pragma region PostProcess
         //PostProcess::Invert(buffer.m_buffer);
@@ -82,9 +80,27 @@ int main(int argc, char* argv[])
         //PostProcess::Edge(buffer.m_buffer, buffer.m_width, buffer.m_height, 10);
         //PostProcess::Emboss(buffer.m_buffer, buffer.m_width, buffer.m_height);
         #pragma endregion
+
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        glm::mat4 translate =  glm::translate(modelMatrix, glm::vec3(240.0f, 240.0f, 0.0f));
+        glm::mat4 scale = glm::scale(modelMatrix, glm::vec3(5));
+        glm::mat4 rotate = glm::rotate(modelMatrix, glm::radians(time * 90), glm::vec3{ 1, 0, 1 });
+
+        modelMatrix = translate * scale * rotate;
+
+        
+        model.Draw(buffer, modelMatrix);
+
         buffer.Update();
         renderer->CopyFramebuffer(buffer);
+
+
+        //buffer.DrawLinearCurve(200, 100, 100, 200, {255, 0, 0, 255});
+        ////buffer.DrawQuadraticCurve(200, 300, mx, my, 400, 300, {255, 0, 0, 255});
+        //buffer.DrawCubicCurve(200, 300, mx, my, 400, 500, 450, 300, {255, 0, 0, 255});
         //renderer = buffer;
+
+        
 
         renderer->EndFrame();
     }
