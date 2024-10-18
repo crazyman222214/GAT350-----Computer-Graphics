@@ -142,7 +142,7 @@ void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 
 	for (int x = x1, y = y1; x <= x2; x++)
 	{
-		(steep) ? DrawPoint(y, x, color) : DrawPoint(x, y, color);
+		(steep) ? DrawPointClip(y, x, color) : DrawPointClip(x, y, color);
 		error -= dy;
 		if (error < 0)
 		{
@@ -229,7 +229,7 @@ int Framebuffer::ClippingRegionCode(int x, int y)
 void Framebuffer::CohenSutherlandClipDetection(int& x1, int& y1, int& x2, int& y2)
 {
 	//If memory was an issue, I wouldn't store these values but it increases readability
-	short left = 1;
+	short left = 1; //0001
 	short right = 2;
 	short bottom = 4;
 	short top = 8;
@@ -271,15 +271,15 @@ void Framebuffer::CohenSutherlandClipDetection(int& x1, int& y1, int& x2, int& y
 				x = x1 + (x2 - x1) * (m_height - y1) / (y2 - y1);
 				y = m_height;
 			}
+			else if (codeOut & right)
+			{
+				y = y1 + (y2 - y1) * (m_width - x1) / (x2 - x1);
+				x = m_width;
+			}
 			else if (codeOut & left)
 			{
 				y = y1 + (y2 - y1) * (0 - x1) / (x2 - x1);
 				x = 0;
-			}
-			else if (codeOut & left)
-			{
-				y = y1 + (y2 - y1) * (m_width - x1) / (x2 - x1);
-				x = m_width;
 			}
 
 			//Finds out which code it is correcting and generates a new clipping code and runs the algo again
@@ -295,7 +295,7 @@ void Framebuffer::CohenSutherlandClipDetection(int& x1, int& y1, int& x2, int& y
 				y2 = y;
 				code2 = ClippingRegionCode(x2, y2);
 			}
-		}
+		}	
 	}
 }
 
