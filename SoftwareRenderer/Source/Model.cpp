@@ -49,7 +49,7 @@ bool Model::Load(const std::string& filename)
 
 	Verticies_t vertices;
 	std::string line;
-	while (std::getline(stream, line))
+ 	while (std::getline(stream, line))
 	{
 		// read in vertex positions
 		// https://cplusplus.com/reference/string/string/substr/

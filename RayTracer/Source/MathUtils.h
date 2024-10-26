@@ -1,4 +1,7 @@
 #pragma once
+#include <glm/glm.hpp>
+#define FLT_EPSILON 1.192092896e-07F 
+
 template<typename T>
 inline T Lerp(const T& a, const T& b, float t)
 {
@@ -32,4 +35,21 @@ template<typename T>
 inline T Clamp(const T& value, const T& min, const T& max)
 {
 	return (value > max) ? max : (value < min) ? min : value;
+}
+
+inline glm::vec3 Cross(const glm::vec3& v1, const glm::vec3& v2)
+{
+	glm::vec3 result;
+
+	result.x = v1.y * v2.z - v2.y * v1.z;
+	result.y = v1.x * v2.z - v2.x * v1.z;
+	result.z = v1.x * v2.y - v2.x * v1.y;
+
+	return result;
+}
+
+inline bool approximately(float value1, float value2)
+{
+	// check if the difference between the values is less than epsilon
+	return (std::abs(value1 - value2) < FLT_EPSILON);
 }

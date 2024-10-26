@@ -29,12 +29,12 @@ int main(int argc, char* argv[])
 
     input.Initialize();
 
-    image.Load("scene.jpg");
+    image.Load("landscape.jpg");
 
     Camera camera(renderer->GetWidth(), renderer->GetHeight());
     camera.SetView(glm::vec3{ 0, 40, -50 }, glm::vec3{ 1 });
     camera.SetProjection(120.0f, 800.0f / 600.0f, 0.1f, 200.0f);
-    Transform cameraTransform{ {0, 0, -20}};
+    Transform cameraTransform{ {0, -3, -17}};
 
 
     Framebuffer buffer(*renderer, renderer->GetWidth(), renderer->GetHeight());
@@ -49,21 +49,31 @@ int main(int argc, char* argv[])
         {-10, -5, 0 }
     };*/
     //Model model{ verticies, {0, 255, 0, 255} };
-    Transform gunTransform{ {0, 0, 0}, glm::vec3{0, 90, 0}, glm::vec3{3} };
-    Transform teacupTransform{ {20, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{3} };
-    Transform benzTransform{ {20, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{3} };
+    Transform roadTransform{ {-20, -7, 0}, glm::vec3{0, 180, 0}, glm::vec3{1} };
+    //Transform teacupTransform{ {20, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{3} };
+    Transform treeTransform{ {5, -5, -10}, glm::vec3{0, 90, 0}, glm::vec3{0.02f} };
+    Transform copTransform{ {0, -4, 2}, glm::vec3{0, 90, 0}, glm::vec3{0.02f} };
 
     std::vector<std::unique_ptr<Actor>> actors;
 
     //Model gunModel;
-    auto gunModel = std::make_shared<Model>();
-    gunModel->Load("Pistol_02.obj");
-    gunModel->SetColor({ 0, 255, 0, 255 });
-    Actor gunActor(gunTransform, gunModel);
+    auto roadModel = std::make_shared<Model>();
+    roadModel->Load("FinalBaseMesh.obj");
+    roadModel->SetColor({ 0, 255, 0, 255 });
+    auto roadActor = std::make_unique<Actor>(roadTransform, roadModel);
+    actors.push_back(std::move(roadActor));
 
-    Model teacupModel;
-    teacupModel.Load("teapot.obj");
-    teacupModel.SetColor({ 0, 0, 255, 255 });
+    auto treeModel = std::make_shared<Model>();
+    treeModel->Load("Tree.obj");
+    treeModel->SetColor({ 0, 255, 0, 255 });
+    auto treeActor = std::make_unique<Actor>(treeTransform, treeModel);
+    actors.push_back(std::move(treeActor));
+
+    auto bananaModel = std::make_shared<Model>();
+    bananaModel->Load("banana.obj");
+    bananaModel->SetColor({ 255, 0, 0, 255 });
+    auto bananaActor = std::make_unique<Actor>(copTransform, bananaModel);
+    actors.push_back(std::move(bananaActor));
 
 
     SetBlendMode(BlendMode::Normal);
@@ -85,7 +95,7 @@ int main(int argc, char* argv[])
 
         //Draws background Image
         SetBlendMode(BlendMode::Normal);
-        //buffer.DrawImage(-10, -20, image);
+        buffer.DrawImage(0, 0, image);
 
         int mx, my;
         SDL_GetMouseState(&mx, &my);
@@ -144,8 +154,10 @@ int main(int argc, char* argv[])
         //transform.rotation.z += rotation * 90.0f * time.GetDeltaTime();
         
         //teacupModel.Draw(buffer, teacupTransform.GetMatrix(), camera);
-        //benzModel.Draw(buffer, benzTransform.GetMatrix(), camera);
-        gunActor.Draw(buffer, camera);
+        for (auto& actor : actors)
+        {
+            actor->Draw(buffer, camera);
+        }
         
         buffer.Update();
         renderer->CopyFramebuffer(buffer);

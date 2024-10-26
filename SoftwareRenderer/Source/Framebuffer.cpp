@@ -115,7 +115,7 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 {
 
-	CohenSutherlandClipDetection(x1, y1, x2, y2);
+	//CohenSutherlandClipDetection(x1, y1, x2, y2);
 
 	int dy = y2 - y1;
 	int dx = x2 - x1;
