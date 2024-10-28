@@ -15,4 +15,5 @@ public:
 
 private:
 	std::vector<std::unique_ptr<SceneObject>> m_objects;
+	
 };

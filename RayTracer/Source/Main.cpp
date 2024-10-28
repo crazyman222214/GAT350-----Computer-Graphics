@@ -17,6 +17,7 @@
 #include <SDL.h>
 #include <iostream>
 #include "Plane.h"
+#include "Random.h"
 
 int main(int argc, char* argv[])
 {
@@ -39,8 +40,24 @@ int main(int argc, char* argv[])
 
     std::shared_ptr<Material> planeMaterial = std::make_shared<Material>(color3_t{ 0.59f, 0.59f, 0.66f });
     std::unique_ptr<Plane> plane = std::make_unique<Plane>(glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 1, 0.25f }, planeMaterial);
+
+    std::shared_ptr<Material> gray = std::make_shared<Material>(color3_t{ 0.5f });
+    std::shared_ptr<Material> red = std::make_shared<Material>(color3_t{ 1, 0, 0 });
+    std::shared_ptr<Material> blue = std::make_shared<Material>(color3_t{ 0, 0, 1 });
+
+    std::vector<std::shared_ptr<Material>> materials;
+
+    materials.push_back(red);
+    materials.push_back(gray);
+    materials.push_back(blue);
+
+    for (int i = 0; i < 10; i++)
+    {
+        auto object = std::make_unique<Sphere>(random(glm::vec3{ -10 }, glm::vec3{ 10 }), randomf(2), materials[random(materials.size())]);
+        scene.AddObject(std::move(object));
+    }
+
     scene.AddObject(std::move(plane));
-    
 
     /*Verticies_t verticies
     {
@@ -64,6 +81,9 @@ int main(int argc, char* argv[])
         time.Tick();
 
         renderer->CheckForEvents();
+
+        
+
 
         buffer.Clear(ColorConvert(color4_t{0, 0, 0, 1}));
         scene.Render(buffer, camera);

@@ -36,7 +36,9 @@ void Framebuffer::Clear(const color_t& color)
 void Framebuffer::DrawPoint(int x, int y, const color_t& color)
 {
 	color_t& dest = m_buffer[x + (y * m_width)];
+
 	dest = ColorBlend(color, dest);
+
 }
 
 void Framebuffer::DrawPointClip(int x, int y, const color_t& color)

@@ -191,7 +191,6 @@ void PostProcess::Sharpen(std::vector<color_t>& buffer, int width, int height)
 		int x = i % width;
 		int y = i / width;
 
-
 		if (x < 1 || x + 1 >= width || y < 1 || y + 1 >= height) continue;
 
 		int r = 0;
