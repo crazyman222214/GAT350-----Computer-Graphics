@@ -30,6 +30,10 @@ color3_t Tracer::Trace(Scene& scene, ray_t& ray, float minDistance, float maxDis
 
 			return attenuation * Trace(scene, scatter, minDistance, maxDistance, depth - 1);
 		}
+		else
+		{
+			return raycastHit.material.lock()->GetEmissive();
+		}
 		return raycastHit.material.lock()->GetColor();
 	}
 

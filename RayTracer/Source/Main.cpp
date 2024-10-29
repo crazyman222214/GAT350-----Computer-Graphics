@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
     Scene scene;
 
-    std::shared_ptr<Material> sphereMaterial = std::make_shared<Lambertian>(color3_t{1, 1, 0});
+    std::shared_ptr<Material> sphereMaterial = std::make_shared<Emissive>(color3_t{1, 1, 0}, 20);
     std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(glm::vec3{0, 0, 0}, 2.0f, sphereMaterial);
     scene.AddObject(std::move(sphere));
 
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
     std::shared_ptr<Material> gray = std::make_shared<Metal>(color3_t{ 0.5f }, 1);
     std::shared_ptr<Material> red = std::make_shared<Lambertian>(color3_t{ 1, 0, 0 });
-    std::shared_ptr<Material> blue = std::make_shared<Metal>(color3_t{ 0, 0, 1 }, 0.5f);
+    std::shared_ptr<Material> blue = std::make_shared<Metal>(color3_t{ 0, 0, 1 }, 1);
 
     std::vector<std::shared_ptr<Material>> materials;
 
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
         renderer->CheckForEvents();
 
         buffer.Clear(ColorConvert(color4_t{0, 0, 0, 1}));
-        scene.Render(buffer, camera, 100, 10);
+        scene.Render(buffer, camera, 20, 20);
         //tracer.Render(buffer, camera);
         buffer.Update();
         renderer->CopyFramebuffer(buffer);
