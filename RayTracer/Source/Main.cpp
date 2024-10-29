@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
         renderer->CheckForEvents();
 
         buffer.Clear(ColorConvert(color4_t{0, 0, 0, 1}));
-        scene.Render(buffer, camera, 50);
+        scene.Render(buffer, camera, 100, 10);
         //tracer.Render(buffer, camera);
         buffer.Update();
         renderer->CopyFramebuffer(buffer);
