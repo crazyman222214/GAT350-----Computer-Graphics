@@ -48,8 +48,21 @@ inline glm::vec3 Cross(const glm::vec3& v1, const glm::vec3& v2)
 	return result;
 }
 
-inline bool approximately(float value1, float value2)
+
+inline bool Approximately(float value1, float value2)
 {
 	// check if the difference between the values is less than epsilon
-	return (std::abs(value1 - value2) < FLT_EPSILON);
+	return (std::fabs(value1 - value2) < FLT_EPSILON);
+}
+
+inline float DotProduct(const glm::vec3& vec1, const glm::vec3& vec2)
+{
+	return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
+}
+
+
+inline glm::vec3 Reflect(const glm::vec3& i, const glm::vec3& n)
+{
+	return i - (n * DotProduct(n, i)) * 2.0f;
+
 }
