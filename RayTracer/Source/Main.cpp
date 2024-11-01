@@ -55,6 +55,11 @@ int main(int argc, char* argv[])
     materials.push_back(blue);
     materials.push_back(green);
 
+    auto model = std::make_unique<Model>(blue);
+    model->Load("teapot.obj");
+    scene.AddObject(std::move(model));
+
+
     for (int i = 0; i < 00; i++)
     {
         auto object = std::make_unique<Sphere>(random(glm::vec3{ -10 }, glm::vec3{ 10 }), randomf(2), materials[random(materials.size())]);
@@ -68,7 +73,7 @@ int main(int argc, char* argv[])
     auto object2 = std::make_unique<Sphere>(glm::vec3{-5, 0, 0}, 2.5f, red);
 
     auto triangle = std::make_unique<Triangle>(glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, -5, 0 }, glm::vec3{5, 0, 0}, blue);
-    scene.AddObject(std::move(triangle));
+    //scene.AddObject(std::move(triangle));
    
 
     //scene.AddObject(std::move(object));
@@ -93,7 +98,7 @@ int main(int argc, char* argv[])
 
 
     // create renderer
-    scene.Render(buffer, camera, 10, 30);
+    scene.Render(buffer, camera, 10, 10);
     buffer.Update();
 
     while (!renderer->IsQuit())

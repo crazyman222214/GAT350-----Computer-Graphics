@@ -8,8 +8,7 @@ public:
 		m_v1{v1},
 		m_v2{v2},
 		m_v3{ v3 }
-	{
-	}
+	{}
 
 	bool Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance) override;
 

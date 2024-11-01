@@ -1,17 +1,14 @@
 #include "Model.h"
 #include "Framebuffer.h"
 #include "Camera.h"
+#include "Triangle.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
-/// <summary>
-/// Convert point from model space to world space
-/// </summary>
-/// <param name="framebuffer">The buffer we are drawing to</param>
-/// <param name="model">the model matrix that holds the points in model space</param>
+
 void Model::Draw(Framebuffer& framebuffer, const glm::mat4& model, const Camera& camera)
 {
-	
+
 }
 
 bool Model::Load(const std::string& filename)
@@ -26,7 +23,7 @@ bool Model::Load(const std::string& filename)
 		return false;
 	}
 
-	Verticies_t vertices;
+	Vertices_t vertices;
 	std::string line;
 	while (std::getline(stream, line))
 	{
@@ -79,7 +76,7 @@ bool Model::Load(const std::string& filename)
 					glm::vec3 position = vertices[index[0] - 1];
 
 					// TODO: add position to m_vertices
-					m_verticies.push_back(position);
+					m_vertices.push_back(position);
 				}
 			}
 		}
@@ -88,4 +85,20 @@ bool Model::Load(const std::string& filename)
 	stream.close();
 
 	return true;
+}
+
+bool Model::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance)
+{
+	// check cast ray with mesh triangles 
+
+	for (size_t i = 0; i < m_vertices.size(); i += 3)
+	{
+		Triangle triangle(m_vertices[i], m_vertices[i+1], m_vertices[i+2], m_material);
+		if (triangle.Hit(ray, raycastHit, minDistance, maxDistance))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
