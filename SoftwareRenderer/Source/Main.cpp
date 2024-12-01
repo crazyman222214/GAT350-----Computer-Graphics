@@ -9,6 +9,8 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Actor.h"
+#include "Shader.h"
+#include "Light.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -34,46 +36,31 @@ int main(int argc, char* argv[])
     Camera camera(renderer->GetWidth(), renderer->GetHeight());
     camera.SetView(glm::vec3{ 0, 40, -50 }, glm::vec3{ 1 });
     camera.SetProjection(120.0f, 800.0f / 600.0f, 0.1f, 200.0f);
-    Transform cameraTransform{ {0, -3, -17}};
+    Transform cameraTransform{ {0, 2, -5}};
 
 
     Framebuffer buffer(*renderer, renderer->GetWidth(), renderer->GetHeight());
 
-    /*Verticies_t verticies
-    { 
-        {-5, 5, 0}, 
-        {5, 5, 0},
-        {-5, -5, 0},
-        {-10, 0, 0},
-        {-5, 0, 0},
-        {-10, -5, 0 }
-    };*/
-    //Model model{ verticies, {0, 255, 0, 255} };
-    Transform roadTransform{ {-20, -7, 0}, glm::vec3{0, 180, 0}, glm::vec3{1} };
-    //Transform teacupTransform{ {20, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{3} };
-    Transform treeTransform{ {5, -5, -10}, glm::vec3{0, 90, 0}, glm::vec3{0.02f} };
-    Transform copTransform{ {0, -4, 2}, glm::vec3{0, 90, 0}, glm::vec3{0.02f} };
+    //Shader
+    VertexShader::uniforms.view = camera.GetView();
+    VertexShader::uniforms.projection = camera.GetProjection();
+    VertexShader::uniforms.ambient = color3_t{ 0.1f };
+
+    VertexShader::uniforms.light.position = glm::vec3{ 15, 10, -10 };
+    VertexShader::uniforms.light.direction = glm::vec3{ 0, -1, 0 }; // light pointing down
+    VertexShader::uniforms.light.color = color3_t{ 1, 0, 0 }; // red light
+    VertexShader::uniforms.light.lightType = light_type_t::POINT;
+
+    Shader::framebuffer = &buffer;
 
     std::vector<std::unique_ptr<Actor>> actors;
 
-    //Model gunModel;
-    auto roadModel = std::make_shared<Model>();
-    roadModel->Load("FinalBaseMesh.obj");
-    roadModel->SetColor({ 0, 255, 0, 255 });
-    auto roadActor = std::make_unique<Actor>(roadTransform, roadModel);
-    actors.push_back(std::move(roadActor));
-
+    Transform treeTransform{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{2} };
     auto treeModel = std::make_shared<Model>();
-    treeModel->Load("Tree.obj");
-    treeModel->SetColor({ 0, 255, 0, 255 });
+    treeModel->Load("models/sphere.obj");
+    treeModel->SetColor({ 0, 1, 0, 1 });
     auto treeActor = std::make_unique<Actor>(treeTransform, treeModel);
     actors.push_back(std::move(treeActor));
-
-    auto bananaModel = std::make_shared<Model>();
-    bananaModel->Load("banana.obj");
-    bananaModel->SetColor({ 255, 0, 0, 255 });
-    auto bananaActor = std::make_unique<Actor>(copTransform, bananaModel);
-    actors.push_back(std::move(bananaActor));
 
 
     SetBlendMode(BlendMode::Normal);
@@ -95,7 +82,6 @@ int main(int argc, char* argv[])
 
         //Draws background Image
         SetBlendMode(BlendMode::Normal);
-        buffer.DrawImage(0, 0, image);
 
         int mx, my;
         SDL_GetMouseState(&mx, &my);
@@ -127,16 +113,14 @@ int main(int argc, char* argv[])
             glm::vec3 direction{ 0 };
             int rotation = 0;
 
-            if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) direction.x = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_LEFT)) direction.x = -1;
-            if (input.GetKeyDown(SDL_SCANCODE_UP)) direction.y = -1;
-            if (input.GetKeyDown(SDL_SCANCODE_DOWN)) direction.y = 1;
+            if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1;
+            if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x = 1;
 
-            if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = -1;
-            if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = 1;
+            if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = -1;
+            if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y = 1;
 
-            if (input.GetKeyDown(SDL_SCANCODE_Q)) rotation = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_E)) rotation = -1;
+            if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
+            if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
 
 
             glm::vec3 offset = cameraTransform.GetMatrix() * glm::vec4{ direction, 0 };
@@ -150,20 +134,22 @@ int main(int argc, char* argv[])
             input.SetRelativeMode(false);
         }
         camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
-        
+        VertexShader::uniforms.view = camera.GetView();
+
         //transform.rotation.z += rotation * 90.0f * time.GetDeltaTime();
         
         //teacupModel.Draw(buffer, teacupTransform.GetMatrix(), camera);
         for (auto& actor : actors)
         {
-            actor->Draw(buffer, camera);
+            actor->GetTransform().rotation.y += time.GetDeltaTime() * 90;
+            actor->Draw();
         }
         
         buffer.Update();
         renderer->CopyFramebuffer(buffer);
 
 
-        //buffer.DrawLinearCurve(200, 100, 100, 200, {255, 0, 0, 255});
+        //buffer.DrawLinearCurve(200, 100, 100, 200, {255, 0, 0, 255});w
         ////buffer.DrawQuadraticCurve(200, 300, mx, my, 400, 300, {255, 0, 0, 255});
         //buffer.DrawCubicCurve(200, 300, mx, my, 400, 500, 450, 300, {255, 0, 0, 255});
         //renderer = buffer;

@@ -39,7 +39,7 @@ color3_t Tracer::Trace(Scene& scene, ray_t& ray, float minDistance, float maxDis
 
 	glm::vec3 direction = glm::normalize(ray.direction);
 	float t = (direction.y + 1) * 0.5f;
-	color3_t color = Lerp(color3_t{ 1, 1, 1 }, color3_t{0.5f, 0.7f, 1.0f}, t);
+	color3_t color = Lerp(color3_t{1}, color3_t{1}, t);
 	
 	return color;
 }

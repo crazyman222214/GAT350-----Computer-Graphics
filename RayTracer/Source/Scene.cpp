@@ -3,13 +3,25 @@
 #include "Camera.h"
 #include "Color.h"
 #include "Tracer.h"
-#include <iostream>
 #include "Random.h"
+#include "ETime.h"
+#include <iostream>
+
+void Scene::Update()
+{
+	for (auto& object : m_objects)
+	{
+		object->Update();
+	}
+}
 
 void Scene::Render(Framebuffer& framebuffer, const Camera& camera, int numSamples, int depth)
 {
+	Time frameTimer;
+	Time scanlineTimer;
 	for (int y = 0; y < framebuffer.m_height; y++)
 	{
+		scanlineTimer.Reset();
 		for (int x = 0; x < framebuffer.m_width; x++)
 		{
 			color3_t color{ 0 };
@@ -35,6 +47,7 @@ void Scene::Render(Framebuffer& framebuffer, const Camera& camera, int numSample
 			//<color average is color / number samples, remember to do float division>
 			//	framebuffer.DrawPoint(x, y, ColorConvert(color));
 		}
-		std::cout << "y: " << y << std::endl;
+		std::cout << "y: " << y << "- Scanline time: " << scanlineTimer.GetElapsedTime() << std::endl;
 	}
+	std::cout << "Frame time: " << frameTimer.GetElapsedTime() << std::endl;
 }

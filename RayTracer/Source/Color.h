@@ -1,5 +1,7 @@
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 #include "MathUtils.h"
+#include <glm/gtx/color_space.hpp>
 #include <glm/glm.hpp>
 #include <algorithm>
 #include <SDL.h>
@@ -7,6 +9,16 @@
 using color_t = SDL_Color;
 using color3_t = glm::vec3;
 using color4_t = glm::vec4;
+
+inline float LinearToGamma(float linear)
+{
+	if (linear > 0) return std::sqrt(linear);
+}
+
+inline color3_t HSVtoRGB(const glm::vec3& hsv)
+{
+	return glm::rgbColor(hsv);
+}
 
 inline color_t ColorConvert(const color4_t& color4) 
 { 

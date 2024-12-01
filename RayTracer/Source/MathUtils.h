@@ -42,7 +42,7 @@ inline glm::vec3 Cross(const glm::vec3& v1, const glm::vec3& v2)
 	glm::vec3 result;
 
 	result.x = v1.y * v2.z - v2.y * v1.z;
-	result.y = v1.x * v2.z - v2.x * v1.z;
+	result.y = v1.z * v2.x - v2.z * v1.x;
 	result.z = v1.x * v2.y - v2.x * v1.y;
 
 	return result;

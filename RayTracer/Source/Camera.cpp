@@ -8,8 +8,8 @@ void Camera::SetView(const glm::vec3& eye, const glm::vec3& target, const glm::v
 
 	// create camera axis
 	m_forward = glm::normalize(target - eye);
-	m_right = glm::normalize(Cross(up, m_forward));
-	m_up = Cross(m_forward, m_right);
+	m_right = glm::normalize(glm::cross(up, m_forward));
+	m_up = glm::cross(m_forward, m_right);
 
 	CalculateViewPlane();
 }

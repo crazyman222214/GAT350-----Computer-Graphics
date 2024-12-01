@@ -24,18 +24,23 @@ struct Transform
 	glm::vec3 GetForward()
 	{
 		glm::mat4 mxr = glm::eulerAngleYXZ(glm::radians(rotation.y), glm::radians(rotation.x), glm::radians(rotation.z));
-		return mxr * glm::vec4{0, 0, 1, 1};
+		return mxr * glm::vec4{0, 0, 1, 0};
 	}
 
 	glm::vec3 GetUp()
 	{
 		glm::mat4 mxr = glm::eulerAngleYXZ(glm::radians(rotation.y), glm::radians(rotation.x), glm::radians(rotation.z));
-		return mxr * glm::vec4{ 0, 1, 0, 1 };
+		return mxr * glm::vec4{ 0, 1, 0, 0 };
 	}
 
 	glm::vec3 GetRight()
 	{
 		glm::mat4 mxr = glm::eulerAngleYXZ(glm::radians(rotation.y), glm::radians(rotation.x), glm::radians(rotation.z));
-		return mxr * glm::vec4{ 1, 0, 0, 1 };
+		return mxr * glm::vec4{ 1, 0, 0, 0 };
+	}
+
+	glm::vec4 operator *(const glm::vec4& v)
+	{
+		return GetMatrix() * v;
 	}
 };
