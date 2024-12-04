@@ -51,13 +51,17 @@ int main(int argc, char* argv[])
     VertexShader::uniforms.light.color = color3_t{ 1, 0, 0 }; // red light
     VertexShader::uniforms.light.lightType = light_type_t::POINT;
 
+    
+
     Shader::framebuffer = &buffer;
+    Shader::cull_mode = eCullMode::BACK;
+    Shader::front_face = eFrontFace::CCW;
 
     std::vector<std::unique_ptr<Actor>> actors;
 
-    Transform treeTransform{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{2} };
+    Transform treeTransform{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{5} };
     auto treeModel = std::make_shared<Model>();
-    treeModel->Load("models/sphere.obj");
+    treeModel->Load("models/ogre.obj");
     treeModel->SetColor({ 0, 1, 0, 1 });
     auto treeActor = std::make_unique<Actor>(treeTransform, treeModel);
     actors.push_back(std::move(treeActor));

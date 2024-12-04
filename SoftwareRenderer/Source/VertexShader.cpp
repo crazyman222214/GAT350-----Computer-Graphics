@@ -18,17 +18,20 @@ void VertexShader::Process(const vertex_t& ivertex, vertex_output_t& overtex)
     glm::vec3 light_dir;
     
     float intensity = 1;
+    glm::vec4 light_pos = uniforms.view * glm::vec4{ uniforms.light.position, 1 };
 
     if (uniforms.light.lightType == light_type_t::POINT)
     {
-        glm::vec4 light_pos = uniforms.view * glm::vec4{ uniforms.light.position, 1 };
         glm::vec3 vposition = mv * glm::vec4{ ivertex.position, 1 };
         light_dir = glm::normalize(light_pos - overtex.position); // normalize light direction
+
         intensity = std::max(glm::dot(light_dir, overtex.normal), 0.0f); // Clamped so the lowest is 0
     }
     else if (uniforms.light.lightType == light_type_t::DIRECTIONAL)
     {
-        light_dir = glm::normalize(glm::vec4{ uniforms.light.direction, 1 }) * uniforms.view  * glm::vec4{ -1 };//flipping the normalized light direction
+       
+        light_dir = glm::normalize(uniforms.view * glm::vec4{ -uniforms.light.direction, 0 }); //flipping the normalized light direction
+
         intensity = std::max(glm::dot(light_dir, overtex.normal), 0.0f); // Clamped so the lowest is 0
     }
 

@@ -2,6 +2,19 @@
 #include "VertexShader.h"
 #include "FragmentShader.h"
 
+enum eFrontFace
+{
+	CW,
+	CCW
+};
+
+enum eCullMode
+{
+	FRONT,
+	BACK,
+	NONE
+};
+
 class Shader
 {
 public:
@@ -10,4 +23,8 @@ public:
 
 public:
 	static class Framebuffer* framebuffer;
+
+	static eFrontFace front_face;
+	static eCullMode cull_mode;
 };
+
