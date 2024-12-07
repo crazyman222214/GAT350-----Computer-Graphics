@@ -1,4 +1,4 @@
-#Introduction
+# Introduction
 ---
 
 GAT350, or Computer Graphics is a class oriented on teaching the different ways we can render graphics with a basic framework.
