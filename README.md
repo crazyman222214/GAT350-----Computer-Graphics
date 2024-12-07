@@ -42,6 +42,8 @@ It demonstrates how we can use the CPU-based rasterization process to mimic the 
 - **Shadows and Soft Shadows**: Supports shadow rays for accurate shadow computation with optional soft shadows.
 - **Global Illumination**: Includes path tracing for realistic lighting and color bleeding.
 
+![alt text](https://github.com/crazyman222214/GAT350-----Computer-Graphics/blob/master/Build/coolballs.png)
+![alt text](https://github.com/crazyman222214/GAT350-----Computer-Graphics/blob/master/Build/CornellBox.png)
 
   
 ## Installation
