@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
     
 
     Shader::framebuffer = &buffer;
-    Shader::cull_mode = eCullMode::BACK;
+    Shader::cull_mode = eCullMode::FRONT;
     Shader::front_face = eFrontFace::CCW;
 
     std::vector<std::unique_ptr<Actor>> actors;
