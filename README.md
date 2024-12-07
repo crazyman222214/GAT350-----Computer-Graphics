@@ -22,9 +22,12 @@ It demonstrates how we can use the CPU-based rasterization process to mimic the 
 - **Viewport Transformation**: Maps 3D coordinates to 2D screen space with configurable viewports.
 - **Z-Buffering**: Ensures correct depth handling for visible surfaces.
 - **Importing models**: Supports importing models with a .obj.
+- **Post Processing**: Supports various post processing effects such as Edge Detection and Sharpen
 
 
 ![alt text](https://github.com/crazyman222214/GAT350-----Computer-Graphics/blob/master/Build/SoftRastLighting.png)
+![alt text](https://github.com/crazyman222214/GAT350-----Computer-Graphics/blob/master/Build/Edge.png)
+![alt text](https://github.com/crazyman222214/GAT350-----Computer-Graphics/blob/master/Build/Sharpen.png)
 
 
 
